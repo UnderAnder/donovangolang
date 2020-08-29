@@ -13,13 +13,31 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 )
 
 func main() {
+	start := time.Now()
 	fmt.Println(os.Args[0])
 
+	printArgsRange(start)
+	printArgsFor(start)
+
+}
+
+func printArgsRange(start time.Time) {
 	for i, arg := range os.Args[1:] {
 		fmt.Println(i, arg)
-
 	}
+	fmt.Printf("%v микросекунд прошло\n", time.Since(start).Microseconds())
+}
+
+func printArgsFor(start time.Time) {
+	var s, sep string
+	for i := 1; i < len(os.Args); i++ {
+		s += sep + os.Args[i]
+		sep = " "
+	}
+	fmt.Println(s)
+
 }
