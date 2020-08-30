@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"strconv"
 	"sync"
 )
 
@@ -13,7 +14,17 @@ var count int
 func main() {
 	http.HandleFunc("/", handler)
 	http.HandleFunc("/count", counter)
+	http.HandleFunc("/lissajous", lissajouser)
 	log.Fatal(http.ListenAndServe("localhost:8000", nil))
+}
+
+func lissajouser(w http.ResponseWriter, r *http.Request) {
+	if err := r.ParseForm(); err != nil {
+		log.Print(err)
+	}
+	fmt.Println(r.Form["cycles"])
+	cycles, _ := strconv.Atoi(r.Form["cycles"][0])
+	lissajous(w, cycles)
 }
 
 func handler(w http.ResponseWriter, r *http.Request) {
