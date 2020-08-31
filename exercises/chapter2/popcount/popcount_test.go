@@ -19,3 +19,9 @@ func BenchmarkPopCountSlide(b *testing.B) {
 		PopCountSlide(342)
 	}
 }
+
+func BenchmarkPopCountReset(b *testing.B) {
+	for i := 0; i < b.N; i++ {
+		PopCountReset(342)
+	}
+}

@@ -40,7 +40,16 @@ func PopCountSlide(x uint64) int {
 			count++
 		}
 	}
+	return int(count)
+}
 
+// PopCountReset returns the population count (number of set bits) of x.
+func PopCountReset(x uint64) int {
+	var count int
+
+	for ; x != 0; x &= x - 1 { // сбрасывает крайний справа ненулевой бит
+		count++
+	}
 	return int(count)
 }
 
@@ -48,4 +57,5 @@ func main() {
 	fmt.Println(PopCount(113))
 	fmt.Println(PopCountCycle(113))
 	fmt.Println(PopCountSlide(113))
+	fmt.Println(PopCountReset(113))
 }
