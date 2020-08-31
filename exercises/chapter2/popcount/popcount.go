@@ -32,7 +32,20 @@ func PopCountCycle(x uint64) int {
 	return int(count)
 }
 
+func PopCountSlide(x uint64) int {
+	var count int
+
+	for i := uint(0); i < 64; i++ {
+		if x&(1<<i) != 0 {
+			count++
+		}
+	}
+
+	return int(count)
+}
+
 func main() {
-	fmt.Println(PopCountCycle(10))
-	fmt.Println(PopCount(10))
+	fmt.Println(PopCount(113))
+	fmt.Println(PopCountCycle(113))
+	fmt.Println(PopCountSlide(113))
 }
