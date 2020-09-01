@@ -22,25 +22,50 @@ func main() {
 		"width='%d' height='%d'>", width, height)
 	for i := 0; i < cells; i++ {
 		for j := 0; j < cells; j++ {
-			ax, ay := corner(i+1, j)
-			bx, by := corner(i, j)
-			cx, cy := corner(i, j+1)
-			dx, dy := corner(i+1, j+1)
-			fmt.Printf("<polygon points='%g,%g,%g,%g,%g,%g,%g,%g'/>\n",
-				ax, ay, bx, by, cx, cy, dx, dy)
+			//ax, ay := corner(i+1, j)
+			//bx, by := corner(i, j)
+			//cx, cy := corner(i, j+1)
+			//dx, dy := corner(i+1, j+1)
+			//fmt.Printf("<polygon points='%g,%g,%g,%g,%g,%g,%g,%g'/>\n",
+			//	ax, ay, bx, by, cx, cy, dx, dy)
+			ax, ay, _ := corner(i+1, j)
+			bx, by, z := corner(i, j)
+			cx, cy, _ := corner(i, j+1)
+			dx, dy, _ := corner(i+1, j+1)
+
+			if z >= 0 {
+				fmt.Printf("<polygon points='%g,%g %g,%g %g,%g %g,%g' "+
+					"fill='rgb(%2.1f%%,0%%,0%%)'/>\n", //#%02x00%02x rgb(%02d%%,00%%,%02d%%)
+					ax, ay, bx, by, cx, cy, dx, dy, z*100)
+			} else {
+				fmt.Printf("<polygon points='%g,%g %g,%g %g,%g %g,%g' "+
+					"fill='rgb(0%%,0%%,%2.1f%%)'/>\n", //#%02x00%02x rgb(%02d%%,00%%,%02d%%)
+					ax, ay, bx, by, cx, cy, dx, dy, z*-100)
+			}
 		}
 	}
 	fmt.Println("</svg>")
 }
 
-func corner(i, j int) (float64, float64) {
+func corner(i, j int) (float64, float64, float64) {
 	// Project (x,y,z) isometrically onto 2-D SVG canvas (sx,sy).
 	x := xyrange * (float64(i)/cells - 0.5)
 	y := xyrange * (float64(j)/cells - 0.5)
 	z := safeValue(saddle(x, y))
 	sx := width/2 + (x-y)*cos30*xyscale
 	sy := height/2 + (x+y)*sin30*xyscale - z*zscale
-	return sx, sy
+	return sx, sy, z
+}
+
+func eggbox(x, y float64) float64 {
+	return 0.2 * (math.Cos(x) + math.Cos(y))
+}
+
+func saddle(x, y float64) float64 {
+	a := 23.0
+	b := 15.0
+
+	return (y*y)/(a*a) - (x*x)/(b*b)
 }
 
 func f(x, y float64) float64 {
@@ -53,15 +78,4 @@ func safeValue(v float64) float64 {
 		v = 0
 	}
 	return v
-}
-
-func eggbox(x, y float64) float64 {
-	return 0.2 * (math.Cos(x) + math.Cos(y))
-}
-
-func saddle(x, y float64) float64 {
-	a := 23.0
-	b := 15.0
-
-	return (y*y)/(a*a) - (x*x)/(b*b)
 }
