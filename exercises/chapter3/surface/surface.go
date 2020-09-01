@@ -34,6 +34,7 @@ func main() {
 }
 
 func corner(i, j int) (float64, float64) {
+	// Project (x,y,z) isometrically onto 2-D SVG canvas (sx,sy).
 	x := xyrange * (float64(i)/cells - 0.5)
 	y := xyrange * (float64(j)/cells - 0.5)
 	z := f(x, y)
@@ -44,5 +45,12 @@ func corner(i, j int) (float64, float64) {
 
 func f(x, y float64) float64 {
 	r := math.Hypot(x, y)
-	return math.Sin(r) / r
+	return safeValue(math.Sin(r) / r)
+}
+
+func safeValue(v float64) float64 {
+	if math.IsNaN(v) || math.IsInf(v, 0) {
+		v = 0
+	}
+	return v
 }
