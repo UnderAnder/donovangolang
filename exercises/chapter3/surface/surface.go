@@ -37,7 +37,7 @@ func corner(i, j int) (float64, float64) {
 	// Project (x,y,z) isometrically onto 2-D SVG canvas (sx,sy).
 	x := xyrange * (float64(i)/cells - 0.5)
 	y := xyrange * (float64(j)/cells - 0.5)
-	z := f(x, y)
+	z := safeValue(saddle(x, y))
 	sx := width/2 + (x-y)*cos30*xyscale
 	sy := height/2 + (x+y)*sin30*xyscale - z*zscale
 	return sx, sy
@@ -45,7 +45,7 @@ func corner(i, j int) (float64, float64) {
 
 func f(x, y float64) float64 {
 	r := math.Hypot(x, y)
-	return safeValue(math.Sin(r) / r)
+	return math.Sin(r) / r
 }
 
 func safeValue(v float64) float64 {
@@ -53,4 +53,15 @@ func safeValue(v float64) float64 {
 		v = 0
 	}
 	return v
+}
+
+func eggbox(x, y float64) float64 {
+	return 0.2 * (math.Cos(x) + math.Cos(y))
+}
+
+func saddle(x, y float64) float64 {
+	a := 23.0
+	b := 15.0
+
+	return (y*y)/(a*a) - (x*x)/(b*b)
 }
