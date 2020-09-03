@@ -6,7 +6,6 @@ import (
 	"image/png"
 	"io"
 	"math/cmplx"
-	"os"
 )
 
 const (
@@ -21,26 +20,10 @@ const (
 
 var ssColors [sswidth][ssheight]color.Color
 
-func Draw(w io.Writer, f string) {
+func Draw(w io.Writer, height, width int) {
+	superSampling("newton")
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
-	for py := 0; py < ssheight; py++ {
-		y := float64(py)/ssheight*(ymax-ymin) + ymin
-		for px := 0; px < sswidth; px++ {
-			x := float64(px)/sswidth*(xmax-xmin) + xmin
-			var m int
-			switch f {
-			case "newton":
-				m = newton(complex(x, y))
-			default:
-				m = mandelbroad(complex(x, y))
-			}
 
-			colour := color.NRGBA{R: uint8(red * m),
-				G: uint8(green * m), B: uint8(blue * m), A: 255}
-			ssColors[px][py] = colour
-		}
-
-	}
 	for py := 0; py < height; py++ {
 		for px := 0; px < width; px++ {
 			si, sj := 2*px, 2*py
@@ -63,6 +46,26 @@ func Draw(w io.Writer, f string) {
 	png.Encode(w, img)
 }
 
+func superSampling(f string) {
+	for py := 0; py < ssheight; py++ {
+		y := float64(py)/ssheight*(ymax-ymin) + ymin
+		for px := 0; px < sswidth; px++ {
+			x := float64(px)/sswidth*(xmax-xmin) + xmin
+			var m int
+			switch f {
+			case "newton":
+				m = newton(complex(x, y))
+			default:
+				m = mandelbroad(complex(x, y))
+			}
+
+			colour := color.NRGBA{R: uint8(red * m),
+				G: uint8(green * m), B: uint8(blue * m), A: 255}
+			ssColors[px][py] = colour
+		}
+	}
+}
+
 func mandelbroad(c complex128) int {
 	i := 0
 	for z := c; cmplx.Abs(z) <= 2 && i < iterations; i++ {
@@ -79,8 +82,4 @@ func newton(z complex128) int {
 		}
 	}
 	return 0
-}
-
-func main() {
-	Draw(os.Stdout, "newton")
 }
