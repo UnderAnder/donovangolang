@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"strings"
 	"unicode/utf8"
 )
 
@@ -29,11 +30,25 @@ func comma(s string) string {
 	return buf.String()
 }
 
+func commaSign(s string) string {
+	start, stop := 0, len(s)
+	if strings.HasPrefix(s, "-") {
+		start = 1
+	}
+	if strings.ContainsRune(s, '.') {
+		stop = strings.IndexRune(s, '.')
+	}
+	return s[:start] + comma(s[start:stop]) + s[stop:]
+}
+
 func main() {
 	fmt.Println(commaRecursive("12345.6789123"))
-	fmt.Println(commaRecursive("100000000000"))
+	fmt.Println(commaRecursive("-100000000000"))
 	fmt.Println(commaRecursive("gearbox"))
 	fmt.Println(comma("12345.6789123"))
-	fmt.Println(comma("100000000000"))
+	fmt.Println(comma("-100000000000"))
 	fmt.Println(comma("gearbox"))
+	fmt.Println(commaSign("12345.6789123"))
+	fmt.Println(commaSign("-100000000000"))
+	fmt.Println(commaSign("gearbox"))
 }
