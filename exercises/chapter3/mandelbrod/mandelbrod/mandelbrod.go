@@ -62,7 +62,7 @@ func superSampling(height, width int, f string) [][]color.Color {
 			case "newton":
 				m = newton(complex(x, y))
 			default:
-				m = mandelbroad(complex(x, y))
+				m = mandelbrod(complex(x, y))
 			}
 
 			colour := color.NRGBA{
@@ -76,7 +76,7 @@ func superSampling(height, width int, f string) [][]color.Color {
 	return ssColors
 }
 
-func mandelbroad(c complex128) int {
+func mandelbrod(c complex128) int {
 	i := 0
 	for z := c; cmplx.Abs(z) <= 2 && i < maxIterations; i++ {
 		z = z*z + c

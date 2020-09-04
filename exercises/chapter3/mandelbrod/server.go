@@ -19,7 +19,7 @@ func main() {
 
 func plotter(w http.ResponseWriter, r *http.Request) {
 	width, height := 1024, 1024
-	f := "mandelbroad"
+	f := "mandelbrod"
 	if err := r.ParseForm(); err != nil {
 		log.Print(err)
 	}
