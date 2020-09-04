@@ -1,18 +1,24 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
 )
 
 func main() {
-	http.HandleFunc("/mandelbroad", ploter)
-	log.Fatal(http.ListenAndServe("localhost:8001", nil))
+	const addr = "localhost:8001"
+	fmt.Printf("Start server at %v\n", addr)
+	fmt.Printf("Mandelbroad http://%v/fractal\n", addr)
+	fmt.Printf("Newton http://%v/fractal?f=newton&width=640&height=640\n", addr)
+	http.HandleFunc("/fractal", plotter)
+	log.Fatal(http.ListenAndServe(addr, nil))
 }
 
-func ploter(w http.ResponseWriter, r *http.Request) {
+func plotter(w http.ResponseWriter, r *http.Request) {
 	width, height := 1024, 1024
+	f := "mandelbroad"
 	if err := r.ParseForm(); err != nil {
 		log.Print(err)
 	}
@@ -23,5 +29,8 @@ func ploter(w http.ResponseWriter, r *http.Request) {
 	if len(r.Form["height"]) != 0 {
 		height, _ = strconv.Atoi(r.Form["height"][0])
 	}
-	Draw(w, width, height)
+	if len(r.Form["f"]) != 0 {
+		f = r.Form["f"][0]
+	}
+	Draw(w, width, height, f)
 }
