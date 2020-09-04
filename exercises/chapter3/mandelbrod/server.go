@@ -1,6 +1,7 @@
 package main
 
 import (
+	"./mandelbrod"
 	"fmt"
 	"log"
 	"net/http"
@@ -32,5 +33,5 @@ func plotter(w http.ResponseWriter, r *http.Request) {
 	if len(r.Form["f"]) != 0 {
 		f = r.Form["f"][0]
 	}
-	Draw(w, width, height, f)
+	mandelbrod.Draw(w, width, height, f)
 }
