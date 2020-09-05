@@ -1,6 +1,4 @@
-package main
-
-import "fmt"
+package popcount
 
 // pc[i] is the population count of i.
 var pc [256]byte
@@ -50,12 +48,5 @@ func PopCountReset(x uint64) int {
 	for ; x != 0; x &= x - 1 { // сбрасывает крайний справа ненулевой бит
 		count++
 	}
-	return int(count)
-}
-
-func main() {
-	fmt.Println(PopCount(113))
-	fmt.Println(PopCountCycle(113))
-	fmt.Println(PopCountSlide(113))
-	fmt.Println(PopCountReset(113))
+	return count
 }
