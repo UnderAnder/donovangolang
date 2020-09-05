@@ -6,19 +6,21 @@ import (
 	"image/color"
 	"image/png"
 	"io"
+	"math"
 	"math/cmplx"
 )
 
 const (
-	xmin, ymin, xmax, ymax = -2, -2, 2, 2
-	maxIterations          = 200
-	red                    = 225
-	green                  = 240
-	blue                   = 250
+	height, width     = 1024, 1024
+	ssheight, sswidth = height * 2, width * 2
+	maxIterations     = 200
+	red               = 225
+	green             = 240
+	blue              = 250
 )
 
-func Draw(w io.Writer, height, width int, f string) {
-	ssColors := superSampling(height, width, f)
+func Draw(w io.Writer, x, y, zoom float64, f string) {
+	ssColors := superSampling(x, y, zoom, f)
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
 
 	for py := 0; py < height; py++ {
@@ -46,9 +48,11 @@ func Draw(w io.Writer, height, width int, f string) {
 	}
 }
 
-func superSampling(height, width int, f string) [][]color.Color {
-	ssheight := height * 2
-	sswidth := width * 2
+func superSampling(x, y, zoom float64, f string) [][]color.Color {
+	t := math.Exp2(1 - zoom)
+	xmin, xmax := x-t, x+t
+	ymin, ymax := y-t, x+t
+
 	ssColors := make([][]color.Color, sswidth)
 	for i := range ssColors {
 		ssColors[i] = make([]color.Color, ssheight)
